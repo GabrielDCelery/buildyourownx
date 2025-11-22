@@ -3,14 +3,24 @@ package main
 import "fmt"
 
 func main() {
-	ch := make(chan int, 3)
+	// The bidirectional chan int in main converts automatically when passed
+	ch := make(chan int)
 
-	for i := range 3 {
+	go producer(ch)
+
+	consumer(ch)
+}
+
+// producer can only send and close (appropriate for a producer)
+func producer(ch chan<- int) {
+	for i := range 5 {
 		ch <- (i + 1)
 	}
-
 	close(ch)
+}
 
+// consumer can only receive (can't accidentally close or send)
+func consumer(ch <-chan int) {
 	for value := range ch {
 		fmt.Println(value)
 	}
