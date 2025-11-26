@@ -23,7 +23,6 @@ func main() {
 
 	mergedErrorChans := mergeErrorChannels(ctx, transformErrorChan, saveErrorChan)
 
-Outer:
 	for {
 		select {
 		case err, ok := <-mergedErrorChans:
@@ -31,13 +30,12 @@ Outer:
 				mergedErrorChans = nil
 				continue
 			}
-			fmt.Printf("%v\n", err)
-			fmt.Println("pipeline cancelled")
+			fmt.Printf("pipeline error: %v\n", err)
 			cancel()
-			break Outer
+			return
 		case <-saveDoneChan:
 			fmt.Printf("successfully finished processing\n")
-			break Outer
+			return
 		}
 	}
 }
@@ -83,7 +81,7 @@ func generator(ctx context.Context, nums []int) <-chan int {
 }
 
 func transform(ctx context.Context, inChan <-chan int) (<-chan int, <-chan error) {
-	errChan := make(chan error, 1)
+	errChan := make(chan error)
 	outChan := make(chan int)
 
 	go func() {
