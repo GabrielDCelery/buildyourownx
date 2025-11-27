@@ -42,8 +42,8 @@ func generator(ctx context.Context) <-chan int {
 	return out
 }
 
-func orDone(ctx context.Context, ch <-chan int) <-chan int {
-	out := make(chan int)
+func orDone[T any](ctx context.Context, ch <-chan T) <-chan T {
+	out := make(chan T)
 	go func() {
 		defer close(out)
 		for {
@@ -65,12 +65,12 @@ func orDone(ctx context.Context, ch <-chan int) <-chan int {
 	return out
 }
 
-func merge(ctx context.Context, chs ...<-chan int) <-chan int {
-	merged := make(chan int)
+func merge[T any](ctx context.Context, chs ...<-chan T) <-chan T {
+	merged := make(chan T)
 	var wg sync.WaitGroup
 	wg.Add(len(chs))
 	for _, ch := range chs {
-		go func(<-chan int) {
+		go func(<-chan T) {
 			defer wg.Done()
 			for {
 				select {
