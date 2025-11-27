@@ -13,7 +13,7 @@ func main() {
 	nums := []int{0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10}
 	genChan := generator(ctx, nums)
 	transChan, transErrChan := transform(ctx, genChan)
-	saveChan, saveErrChan := save(ctx, transChan)
+	doneChan, saveErrChan := save(ctx, transChan)
 	for {
 		select {
 		case err, ok := <-transErrChan:
@@ -30,7 +30,7 @@ func main() {
 				continue
 			}
 			cancel()
-		case <-saveChan:
+		case <-doneChan:
 			fmt.Printf("finished processing\n")
 			return
 		}
