@@ -133,3 +133,52 @@ go func() {
     close(workerChans)
 }()
 ```
+
+```go
+func main() {
+    ctx, cancel := context.WithTimeout(context.Background(), 10*time.Second)
+    defer cancel()
+
+    users := []int{1, 2, 3, 4, 5, 6, 7, 8, 9, 10} // 10 users to process
+
+    workerChans := make(chan (<-chan Result))
+    sem := make(chan struct{}, 3)  // Only 3 concurrent workers
+
+    // Spawn workers with rate limiting
+    go func() {
+        defer close(workerChans)
+        for _, userID := range users {
+            sem <- struct{}{}  // Acquire semaphore (blocks if 3 workers running)
+
+            workerChan := processUser(ctx, userID)  // Returns <-chan Result
+            workerChans <- workerChan  // Send channel to bridge
+
+            // Release semaphore when this worker's channel closes
+            go func(ch <-chan Result) {
+                for range ch {
+                    // Drain the channel
+                }
+                <-sem  // Release
+            }(workerChan)
+        }
+    }()
+
+    // Bridge flattens all worker channels into one
+    results := bridge(ctx, workerChans)
+
+    // Consume all results
+    for result := range results {
+        fmt.Printf("Got result: %v\n", result)
+    }
+}
+
+func processUser(ctx context.Context, id int) <-chan Result {
+    out := make(chan Result)
+    go func() {
+        defer close(out)
+        time.Sleep(500 * time.Millisecond)  // Simulate API call
+        out <- Result{UserID: id, Data: "processed"}
+    }()
+    return out
+}
+```
