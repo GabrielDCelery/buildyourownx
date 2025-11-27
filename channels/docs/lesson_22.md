@@ -40,7 +40,7 @@ worker 2: 1
 
 Key challenge: You need to spawn a goroutine for each sub-channel received to drain it concurrently. Use a WaitGroup to know when all are done.
 
-##
+## When to use the pattern
 
 Example scenario:
 
@@ -54,4 +54,82 @@ go workerChannels <- worker() // Send channels into the channel!
 
 // Bridge flattens all worker outputs into one
 output := bridge(ctx, workerChannels)
+```
+
+Why Bridge Pattern Exists
+
+Problem: Dynamic Workers with Unknown Lifecycle
+
+### Scenario 1: Processing files in a directory
+
+```go
+// BAD: Pre-create one shared channel
+results := make(chan Result)
+
+// Problem: How many workers? When do they finish?
+for _, file := range files {
+    go processFile(file, results)  // All share same channel
+}
+// When do you close `results`? Need WaitGroup + goroutine!
+
+GOOD: Each worker returns its own channel
+workerChans := make(chan (<-chan Result))
+
+go func() {
+    for _, file := range files {
+        // Each worker manages its own channel lifecycle
+        workerChans <- processFile(file)  // Send the channel itself
+    }
+    close(workerChans)
+}()
+
+output := bridge(ctx, workerChans)  // Bridge handles the complexity
+```
+
+### Scenario 2: Recursive/Tree Processing
+
+```go
+// Crawl a website - each page spawns more crawlers
+func crawl(url string) <-chan Page {
+    out := make(chan Page)
+    go func() {
+        defer close(out)
+        page := fetch(url)
+        out <- page
+
+        // Each link creates a NEW worker dynamically
+        for _, link := range page.Links {
+            subPages := crawl(link)  // Returns a channel
+            // How do you merge these into one stream?
+            // Bridge pattern!
+        }
+    }()
+    return out
+}
+```
+
+### Scenario 3: Real-World - API Rate Limiting
+
+```go
+// Process 1000 users, but API limits to 10 concurrent
+users := []User{...1000 users...}
+
+workerChans := make(chan (<-chan Result))
+
+// Semaphore pattern - only 10 workers at a time
+sem := make(chan struct{}, 10)
+
+go func() {
+    for _, user := range users {
+        sem <- struct{}{}  // Acquire
+        worker := processUser(user)  // Returns channel
+        workerChans <- worker  // Send channel to bridge
+        go func() {
+            // Release after worker finishes
+            <-worker
+            <-sem
+        }()
+    }
+    close(workerChans)
+}()
 ```
