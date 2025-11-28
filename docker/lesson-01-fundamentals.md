@@ -9,6 +9,7 @@ Docker is a platform for developing, shipping, and running applications in conta
 ### "It works on my machine!"
 
 Before Docker, developers faced common challenges:
+
 - Code works locally but breaks in production
 - Different team members have different environments
 - Setting up development environments takes hours or days
@@ -18,6 +19,7 @@ Before Docker, developers faced common challenges:
 ### Docker's Solution
 
 Docker containers ensure that your application runs the same way everywhere:
+
 - **Consistency**: Same environment from dev to production
 - **Isolation**: Each container runs independently
 - **Portability**: Run anywhere Docker is installed
@@ -26,6 +28,7 @@ Docker containers ensure that your application runs the same way everywhere:
 ## Containers vs Virtual Machines
 
 ### Virtual Machines
+
 ```
 [App A] [App B] [App C]
 [Guest OS] [Guest OS] [Guest OS]
@@ -35,6 +38,7 @@ Docker containers ensure that your application runs the same way everywhere:
 ```
 
 ### Containers
+
 ```
 [App A] [App B] [App C]
 [Docker Engine]
@@ -43,6 +47,7 @@ Docker containers ensure that your application runs the same way everywhere:
 ```
 
 **Key Differences:**
+
 - Containers share the host OS kernel (VMs have their own OS)
 - Containers start in seconds (VMs take minutes)
 - Containers use less resources (MBs vs GBs)
@@ -51,22 +56,26 @@ Docker containers ensure that your application runs the same way everywhere:
 ## Core Concepts
 
 ### Images
+
 - Read-only templates used to create containers
 - Think of them as "classes" in OOP
 - Stored in registries (like Docker Hub)
 - Example: `nginx:latest`, `node:18`, `postgres:15`
 
 ### Containers
+
 - Running instances of images
 - Think of them as "objects" in OOP
 - Can be started, stopped, deleted
 - Isolated from each other and the host
 
 ### Dockerfile
+
 - Text file with instructions to build an image
 - Like a recipe for creating an image
 
 ### Registry
+
 - Storage and distribution system for images
 - Docker Hub is the public registry
 - Can host private registries
@@ -89,6 +98,7 @@ docker run hello-world
 ```
 
 **What just happened?**
+
 1. Docker checked if `hello-world` image exists locally
 2. It didn't, so Docker downloaded it from Docker Hub
 3. Docker created a container from the image
@@ -121,6 +131,7 @@ docker run -it ubuntu:22.04 bash
 ```
 
 **Flags explained:**
+
 - `-i`: Interactive mode (keep STDIN open)
 - `-t`: Allocate a pseudo-TTY (terminal)
 - `bash`: Command to run inside the container
@@ -159,6 +170,7 @@ docker run -d -p 8080:80 --name my-nginx nginx:latest
 ```
 
 **Flags explained:**
+
 - `-d`: Detached mode (run in background)
 - `-p 8080:80`: Port mapping (host:container)
 - `--name`: Give the container a friendly name
@@ -176,6 +188,7 @@ You should see your nginx container running!
 Open your browser and visit: `http://localhost:8080`
 
 Or use curl:
+
 ```bash
 curl http://localhost:8080
 ```
@@ -200,6 +213,7 @@ docker rm my-nginx
 Now it's your turn to practice! Complete these tasks:
 
 1. **Run a Python container** interactively and check the Python version:
+
    ```bash
    docker run -it python:3.11 bash
    python --version
@@ -225,6 +239,7 @@ Now it's your turn to practice! Complete these tasks:
 <summary>Click to reveal solution</summary>
 
 ### Task 1: Python container
+
 ```bash
 docker run -it python:3.11 bash
 # Inside container:
@@ -233,6 +248,7 @@ exit
 ```
 
 ### Task 2: Redis server
+
 ```bash
 # Run Redis
 docker run -d -p 6379:6379 --name my-redis redis:latest
@@ -249,6 +265,7 @@ docker rm my-redis
 ```
 
 ### Task 3: Container lifecycle
+
 ```bash
 # Run a container
 docker run -d --name lifecycle-test nginx:latest
@@ -269,22 +286,23 @@ docker restart lifecycle-test
 docker stop lifecycle-test
 docker rm lifecycle-test
 ```
+
 </details>
 
 ## Key Commands Learned
 
-| Command | Description |
-|---------|-------------|
-| `docker run` | Create and start a container |
-| `docker ps` | List running containers |
-| `docker ps -a` | List all containers |
-| `docker images` | List images |
-| `docker stop` | Stop a container |
-| `docker start` | Start a stopped container |
-| `docker restart` | Restart a container |
-| `docker rm` | Remove a container |
-| `docker logs` | View container logs |
-| `docker info` | Display system information |
+| Command          | Description                  |
+| ---------------- | ---------------------------- |
+| `docker run`     | Create and start a container |
+| `docker ps`      | List running containers      |
+| `docker ps -a`   | List all containers          |
+| `docker images`  | List images                  |
+| `docker stop`    | Stop a container             |
+| `docker start`   | Start a stopped container    |
+| `docker restart` | Restart a container          |
+| `docker rm`      | Remove a container           |
+| `docker logs`    | View container logs          |
+| `docker info`    | Display system information   |
 
 ## Key Takeaways
 
@@ -298,6 +316,7 @@ docker rm lifecycle-test
 ## Next Steps
 
 In **Lesson 02**, we'll dive deeper into images and containers:
+
 - How images are structured
 - Layer architecture
 - Building custom images
