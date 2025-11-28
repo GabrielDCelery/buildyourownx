@@ -64,7 +64,7 @@ Each lesson includes:
 ## Progress Tracking
 
 - [x] Lesson 01 - Docker Fundamentals
-- [ ] Lesson 02 - Images vs Containers
+- [x] Lesson 02 - Images vs Containers
 - [ ] Lesson 03 - Running Your First Container
 - [ ] Lesson 04 - Docker CLI Essentials
 - [ ] Lesson 05 - Introduction to Dockerfiles
