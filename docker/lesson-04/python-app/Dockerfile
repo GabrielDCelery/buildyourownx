@@ -1,18 +1,21 @@
-FROM python:3.12.12-slim-bookworm
-
-ARG WORKDIR=/app
 ARG UV_VERSION=0.9.9
 
-RUN pip install uv==${UV_VERSION}
+FROM ghcr.io/astral-sh/uv:${UV_VERSION} AS uv
+
+FROM python:3.12.12-slim-bookworm
+
+COPY --from=uv /uv /uvx /bin/
+
+ARG WORKDIR=/app
 
 WORKDIR ${WORKDIR}
 
-COPY pyproject.toml uv.lock ${WORKDIR}/
+COPY pyproject.toml uv.lock ./
 
-RUN uv sync
+RUN uv sync --frozen --no-dev
 
 COPY . . 
 
 EXPOSE 8080
 
-CMD ["python", "main.py"]
+CMD ["uv", "run", "python", "main.py"]
