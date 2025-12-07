@@ -10,7 +10,7 @@ WORKDIR /app
 
 COPY .python-version pyproject.toml uv.lock ./
 
-RUN uv sync
+RUN uv sync --no-dev --frozen
 
 COPY . .
 
