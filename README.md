@@ -8,6 +8,6 @@ Kind a like having a personal tutor.
 
 # Lesson series
 
-`channels` - wanted to get a better understanding of go channels
-`docker` - learn docker starting from the basics
-`kubernetes` - learn kubernetes starting from the basics
+- `channels` - wanted to get a better understanding of go channels
+- `docker` - learn docker starting from the basics
+- `kubernetes` - learn kubernetes starting from the basics
